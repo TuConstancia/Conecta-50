@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Red de Mentores — Flujo de agendamiento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ──────────────────────────────── */
+:root {
+  --bg:        #F5F0E8;
+  --surface:   #FDFAF4;
+  --s2:        #EDE7D9;
+  --s3:        #E4DDD0;
+  --ink:       #1C1710;
+  --ink2:      #3D3528;
+  --muted:     #7A6E5F;
+  --border:    #D8D0C2;
+  --amber:     #D97706;
+  --amber-s:   #FEF3C7;
+  --amber-d:   #92400E;
+  --sage:      #4A6741;
+  --sage-s:    #EBF0E9;
+  --r:         10px;
+  --r-lg:      18px;
+  --sh:        0 2px 12px rgba(28,23,16,.09);
+  --sh-lg:     0 8px 32px rgba(28,23,16,.13);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  min-height:100vh;
+}
+
+/* ── STEP INDICATOR (sticky) ─────────────── */
+.steps-bar{
+  position:sticky;top:0;z-index:200;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:0 0;
+}
+.steps-inner{
+  max-width:960px;
+  margin:0 auto;
+  padding:0 28px;
+  height:64px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.logo-sm{
+  display:flex;align-items:center;gap:8px;
+  font-family:'Playfair Display',serif;
+  font-size:14px;font-weight:700;
+  color:var(--ink);
+  flex-shrink:0;
+}
+.logo-sm .dot{
+  width:28px;height:28px;
+  background:var(--ink);
+  border-radius:7px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;
+}
+
+.steps{
+  display:flex;align-items:center;gap:0;
+  position:absolute;left:50%;transform:translateX(-50%);
+}
+.step{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 14px;
+  border-radius:20px;
+  font-size:12px;font-weight:500;
+  color:var(--muted);
+  transition:all .3s;
+}
+.step.active{
+  background:var(--ink);
+  color:#fff;
+}
+.step.done{
+  color:var(--sage);
+}
+.step-n{
+  width:20px;height:20px;
+  border-radius:50%;
+  border:1.5px solid currentColor;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;
+  flex-shrink:0;
+  transition:all .3s;
+}
+.step.active .step-n{
+  background:#fff;color:var(--ink);border-color:#fff;
+}
+.step.done .step-n{
+  background:var(--sage);border-color:var(--sage);color:#fff;
+}
+.step-connector{
+  width:32px;height:1px;
+  background:var(--border);
+}
+.step.done + .step-connector{background:var(--sage)}
+
+/* ── SCREEN WRAPPER ──────────────────────── */
+.screen{
+  display:none;
+  max-width:960px;
+  margin:0 auto;
+  padding:40px 28px 80px;
+  animation:fadeUp .35s ease both;
+}
+.screen.active{display:block}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ── SHARED COMPONENTS ───────────────────── */
+.screen-label{
+  font-size:10px;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:10px;
+}
+.screen-title{
+  font-family:'Playfair Display',serif;
+  font-size:32px;font-weight:700;
+  line-height:1.18;
+  color:var(--ink);
+  margin-bottom:6px;
+}
+.screen-sub{
+  font-size:13.5px;color:var(--muted);
+  line-height:1.6;
+  margin-bottom:32px;
+}
+
+.btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:10px 22px;
+  border-radius:9px;
+  font-family:'DM Sans',sans-serif;
+  font-size:13.5px;font-weight:600;
+  cursor:pointer;border:none;
+  transition:all .15s;
+}
+.btn-dark{background:var(--ink);color:#fff}
+.btn-dark:hover{background:var(--ink2)}
+.btn-amber{background:var(--amber);color:var(--ink)}
+.btn-amber:hover{background:var(--amber-d);color:#fff}
+.btn-outline{
+  background:transparent;
+  color:var(--ink);
+  border:1.5px solid var(--border);
+}
+.btn-outline:hover{background:var(--s2)}
+.btn-lg{padding:13px 28px;font-size:14.5px;border-radius:10px}
+
+.tag{
+  display:inline-flex;align-items:center;
+  padding:3px 10px;border-radius:20px;
+  font-size:11px;font-weight:600;
+}
+.tag-amber{background:var(--amber-s);color:var(--amber-d)}
+.tag-sage{background:var(--sage-s);color:var(--sage)}
+.tag-n{background:var(--s2);color:var(--muted)}
+
+.av{
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;flex-shrink:0;
+}
+.av-c1{background:linear-gradient(135deg,#059669,#065f46);color:#fff}
+.av-c2{background:linear-gradient(135deg,#7C3AED,#4C1D95);color:#fff}
+.av-c3{background:linear-gradient(135deg,#DC2626,#7F1D1D);color:#fff}
+
+
+/* ═══════════════════════════════════════════
+   PANTALLA 1 — BÚSQUEDA
+═══════════════════════════════════════════ */
+
+/* Hero */
+.hero-1{
+  background:var(--ink);
+  border-radius:var(--r-lg);
+  padding:36px 40px;
+  margin-bottom:28px;
+  position:relative;
+  overflow:hidden;
+}
+.hero-1::before{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 55% 90% at 85% 50%, rgba(217,119,6,.22) 0%, transparent 70%);
+  pointer-events:none;
+}
+.hero-1-inner{position:relative;z-index:1;max-width:520px}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(217,119,6,.18);
+  border:1px solid rgba(217,119,6,.35);
+  border-radius:20px;
+  padding:3px 12px;
+  font-size:11px;font-weight:600;
+  letter-spacing:.5px;
+  color:var(--amber);
+  margin-bottom:14px;
+}
+.hero-1 h1{
+  font-family:'Playfair Display',serif;
+  font-size:28px;font-weight:700;color:#fff;
+  line-height:1.22;margin-bottom:10px;
+}
+.hero-1 p{
+  font-size:13px;color:rgba(255,255,255,.52);
+  line-height:1.65;margin-bottom:22px;
+}
+.hero-stats{display:flex;gap:28px}
+.h-stat-n{
+  font-family:'Playfair Display',serif;
+  font-size:24px;font-weight:700;color:#fff;line-height:1;
+}
+.h-stat-l{
+  font-size:10px;font-weight:500;
+  text-transform:uppercase;letter-spacing:.5px;
+  color:rgba(255,255,255,.4);margin-top:3px;
+}
+
+/* Filtros */
+.filter-row{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:24px;
+  flex-wrap:wrap;
+}
+.filter-label-text{
+  font-size:12px;font-weight:600;
+  color:var(--muted);
+  margin-right:4px;
+}
+.fchip{
+  padding:6px 14px;
+  border-radius:20px;
+  font-size:12.5px;font-weight:500;
+  border:1.5px solid var(--border);
+  background:var(--surface);
+  color:var(--ink2);
+  cursor:pointer;
+  transition:all .15s;
+}
+.fchip:hover{border-color:var(--ink);color:var(--ink)}
+.fchip.active{
+  background:var(--ink);
+  border-color:var(--ink);
+  color:#fff;
+}
+
+/* Search bar */
+.search-row{
+  position:relative;
+  margin-bottom:28px;
+}
+.search-row input{
+  width:100%;
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:10px;
+  padding:12px 16px 12px 42px;
+  font-family:'DM Sans',sans-serif;
+  font-size:14px;color:var(--ink);
+  outline:none;
+  transition:border-color .2s;
+  box-shadow:var(--sh);
+}
+.search-row input:focus{border-color:var(--amber)}
+.search-row svg{
+  position:absolute;left:14px;top:50%;
+  transform:translateY(-50%);
+  color:var(--muted);pointer-events:none;
+}
+
+/* Result grid */
+.result-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+
+.mcard{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  overflow:hidden;
+  cursor:pointer;
+  transition:box-shadow .2s,transform .2s,border-color .2s;
+}
+.mcard:hover{
+  box-shadow:var(--sh-lg);
+  transform:translateY(-3px);
+  border-color:var(--border);
+}
+.mcard.selected{
+  border:2px solid var(--amber);
+  box-shadow:0 0 0 3px rgba(217,119,6,.12);
+}
+.mcard-stripe{height:5px;background:var(--amber)}
+.mcard-stripe.s2{background:var(--sage)}
+.mcard-stripe.s3{background:var(--amber-d)}
+
+.mcard-body{padding:18px}
+.mcard-head{
+  display:flex;align-items:flex-start;gap:11px;
+  margin-bottom:12px;
+}
+.mcard-avwrap{position:relative;flex-shrink:0}
+.online-dot{
+  position:absolute;bottom:1px;right:1px;
+  width:10px;height:10px;
+  background:var(--sage);
+  border:2px solid var(--surface);
+  border-radius:50%;
+}
+.mc-name{font-size:14px;font-weight:600;margin-bottom:2px}
+.mc-role{
+  font-size:11px;color:var(--muted);
+  line-height:1.4;margin-bottom:6px;
+}
+.mc-exp{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:10.5px;font-weight:600;
+  color:var(--amber-d);
+  background:var(--amber-s);
+  padding:2px 8px;border-radius:12px;
+}
+.mcard-tags{
+  display:flex;flex-wrap:wrap;gap:4px;
+  margin-bottom:12px;
+}
+.mcard-footer{
+  display:flex;align-items:center;gap:6px;
+  padding-top:10px;
+  border-top:1px solid var(--border);
+}
+.stars{color:var(--amber);font-size:11px}
+.rating{font-size:12px;font-weight:600}
+.sessions{font-size:11px;color:var(--muted);margin-left:auto}
+
+.ver-btn{
+  width:100%;
+  margin-top:12px;
+  padding:8px;
+  border-radius:8px;
+  background:var(--s2);
+  border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+  font-size:12.5px;font-weight:600;
+  color:var(--ink2);
+  transition:all .15s;
+}
+.ver-btn:hover{background:var(--s3)}
+.mcard.selected .ver-btn{
+  background:var(--amber);
+  color:var(--ink);
+}
+
+
+/* ═══════════════════════════════════════════
+   PANTALLA 2 — PERFIL
+═══════════════════════════════════════════ */
+.profile-layout{
+  display:grid;
+  grid-template-columns:1fr 340px;
+  gap:24px;
+  align-items:start;
+}
+
+/* Left: profile card */
+.profile-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  overflow:hidden;
+}
+.profile-cover{
+  height:90px;
+  background:linear-gradient(135deg,var(--ink) 0%,#3D3528 100%);
+  position:relative;
+}
+.profile-cover::after{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 100% at 20% 100%, rgba(217,119,6,.22) 0%, transparent 60%);
+}
+.profile-avwrap{
+  position:absolute;bottom:-32px;left:28px;z-index:1;
+}
+.profile-avwrap .av{border:3px solid var(--surface)}
+
+.profile-header{
+  padding:44px 28px 24px;
+  border-bottom:1px solid var(--border);
+}
+.profile-name{
+  font-family:'Playfair Display',serif;
+  font-size:24px;font-weight:700;
+  margin-bottom:3px;
+}
+.profile-role{
+  font-size:12.5px;color:var(--muted);
+  line-height:1.5;margin-bottom:14px;
+}
+.profile-badges{
+  display:flex;flex-wrap:wrap;gap:6px;
+  margin-bottom:18px;
+}
+.profile-actions{display:flex;gap:8px}
+
+.profile-section{
+  padding:20px 28px;
+  border-bottom:1px solid var(--border);
+}
+.profile-section:last-child{border-bottom:none}
+.ps-title{
+  font-size:10px;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:12px;
+}
+.ps-bio{
+  font-size:13px;color:var(--ink2);
+  line-height:1.75;
+}
+
+/* Timeline de carrera */
+.career-timeline{
+  display:flex;flex-direction:column;gap:14px;
+}
+.career-item{
+  display:flex;gap:14px;align-items:flex-start;
+}
+.ci-line{
+  display:flex;flex-direction:column;align-items:center;
+  flex-shrink:0;
+  padding-top:3px;
+}
+.ci-dot{
+  width:10px;height:10px;
+  border-radius:50%;
+  background:var(--amber);
+  flex-shrink:0;
+}
+.ci-tail{
+  width:1.5px;
+  flex:1;
+  background:var(--border);
+  margin-top:4px;
+  min-height:20px;
+}
+.career-item:last-child .ci-tail{display:none}
+.ci-body{}
+.ci-role{font-size:13px;font-weight:600;margin-bottom:1px}
+.ci-org{font-size:12px;color:var(--muted)}
+.ci-years{
+  font-size:10.5px;color:var(--muted);
+  background:var(--s2);
+  padding:1px 7px;border-radius:8px;
+  margin-top:4px;
+  display:inline-block;
+}
+
+/* Reviews */
+.reviews{display:flex;flex-direction:column;gap:10px}
+.review{
+  background:var(--s2);
+  border-radius:9px;
+  padding:12px 14px;
+}
+.rv-header{
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:5px;
+}
+.rv-name{font-size:12.5px;font-weight:600}
+.rv-stars{color:var(--amber);font-size:10px;margin-left:auto}
+.rv-text{
+  font-size:12px;color:var(--muted);
+  line-height:1.65;font-style:italic;
+}
+
+/* Right: booking sidebar */
+.booking-sidebar{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  overflow:hidden;
+  position:sticky;top:80px;
+}
+.bs-header{
+  padding:18px 20px;
+  border-bottom:1px solid var(--border);
+  background:var(--s2);
+}
+.bs-header-title{
+  font-size:12px;font-weight:700;
+  letter-spacing:1px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:6px;
+}
+.bs-session-type{
+  display:flex;gap:6px;
+  margin-bottom:0;
+}
+.st-chip{
+  flex:1;
+  padding:7px 8px;
+  border-radius:8px;
+  font-size:11px;font-weight:600;
+  text-align:center;
+  border:1.5px solid var(--border);
+  background:var(--surface);
+  cursor:pointer;
+  transition:all .15s;
+  color:var(--muted);
+}
+.st-chip.active{
+  background:var(--ink);
+  border-color:var(--ink);
+  color:#fff;
+}
+
+.bs-slots{
+  padding:16px 20px;
+  border-bottom:1px solid var(--border);
+}
+.bs-slots-title{
+  font-size:11px;font-weight:700;
+  letter-spacing:.5px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:10px;
+}
+.slot{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 11px;
+  background:var(--s2);
+  border:1.5px solid transparent;
+  border-radius:8px;
+  margin-bottom:6px;
+  cursor:pointer;
+  transition:all .15s;
+}
+.slot:last-child{margin-bottom:0}
+.slot:hover{border-color:var(--amber);background:var(--amber-s)}
+.slot.selected{
+  border-color:var(--amber);
+  background:var(--amber-s);
+}
+.slot-dot{
+  width:8px;height:8px;
+  border-radius:50%;
+  background:var(--sage);flex-shrink:0;
+}
+.slot-time{font-size:12.5px;font-weight:500;flex:1}
+.slot-dur{font-size:10.5px;color:var(--muted)}
+
+.bs-cta{
+  padding:16px 20px;
+}
+.bs-note{
+  font-size:11.5px;color:var(--muted);
+  line-height:1.55;margin-bottom:14px;
+  text-align:center;
+}
+.bs-cta .btn{width:100%;justify-content:center}
+
+
+/* ═══════════════════════════════════════════
+   PANTALLA 3 — CONFIRMACIÓN
+═══════════════════════════════════════════ */
+.confirm-layout{
+  display:grid;
+  grid-template-columns:1fr 380px;
+  gap:32px;
+  align-items:start;
+}
+
+/* Left: form */
+.form-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:28px;
+}
+.form-section{margin-bottom:24px}
+.form-section-title{
+  font-size:11px;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:14px;
+  padding-bottom:10px;
+  border-bottom:1px solid var(--border);
+}
+.fg{margin-bottom:14px}
+.fl{
+  display:block;
+  font-size:11px;font-weight:700;
+  letter-spacing:.5px;text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:5px;
+}
+.fi,.fs,.fta{
+  width:100%;
+  background:var(--s2);
+  border:1.5px solid var(--border);
+  border-radius:8px;
+  padding:9px 12px;
+  font-family:'DM Sans',sans-serif;
+  font-size:13.5px;color:var(--ink);
+  outline:none;
+  transition:border-color .2s;
+}
+.fi:focus,.fs:focus,.fta:focus{border-color:var(--amber)}
+.fta{resize:vertical;min-height:80px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* hipótesis callout */
+.hypothesis-box{
+  background:var(--amber-s);
+  border:1.5px solid rgba(217,119,6,.3);
+  border-radius:10px;
+  padding:14px 16px;
+  margin-bottom:24px;
+  display:flex;gap:10px;
+  align-items:flex-start;
+}
+.hb-icon{
+  font-size:18px;flex-shrink:0;margin-top:1px;
+}
+.hb-text{
+  font-size:12px;color:var(--amber-d);
+  line-height:1.6;
+}
+.hb-text strong{font-weight:700}
+
+/* Right: summary card */
+.summary-card{
+  background:var(--ink);
+  border-radius:var(--r-lg);
+  overflow:hidden;
+  position:sticky;top:80px;
+}
+.sc-header{
+  padding:22px 24px 18px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.sc-label{
+  font-size:10px;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;
+  color:rgba(255,255,255,.4);
+  margin-bottom:12px;
+}
+.sc-mentor-row{
+  display:flex;align-items:center;gap:12px;
+}
+.sc-mentor-name{
+  font-family:'Playfair Display',serif;
+  font-size:18px;font-weight:700;color:#fff;
+}
+.sc-mentor-role{font-size:11.5px;color:rgba(255,255,255,.5)}
+
+.sc-body{padding:18px 24px}
+.sc-item{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  padding:9px 0;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  gap:12px;
+}
+.sc-item:last-of-type{border-bottom:none}
+.sc-key{font-size:11.5px;color:rgba(255,255,255,.45)}
+.sc-val{
+  font-size:12.5px;font-weight:600;
+  color:#fff;text-align:right;
+}
+.sc-val.highlight{color:var(--amber)}
+
+.sc-footer{
+  margin:0 24px 24px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:10px;
+  padding:14px 16px;
+}
+.sc-footer-label{
+  font-size:10px;font-weight:700;
+  letter-spacing:1px;text-transform:uppercase;
+  color:rgba(255,255,255,.4);
+  margin-bottom:5px;
+}
+.sc-footer-text{
+  font-size:12px;color:rgba(255,255,255,.6);
+  line-height:1.55;
+}
+
+/* Confirm btn area */
+.confirm-actions{
+  padding:20px 24px 24px;
+  display:flex;flex-direction:column;gap:8px;
+}
+.confirm-actions .btn{
+  width:100%;
+  justify-content:center;
+}
+.confirm-note{
+  font-size:11px;color:rgba(255,255,255,.35);
+  text-align:center;
+  line-height:1.5;
+}
+
+/* ── SUCCESS SCREEN ──────────────────────── */
+.success-wrap{
+  max-width:520px;
+  margin:60px auto;
+  text-align:center;
+  animation:fadeUp .4s ease both;
+}
+.success-icon{
+  width:72px;height:72px;
+  background:var(--sage);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 24px;
+  font-size:32px;
+}
+.success-title{
+  font-family:'Playfair Display',serif;
+  font-size:30px;font-weight:700;
+  margin-bottom:10px;
+}
+.success-sub{
+  font-size:14px;color:var(--muted);
+  line-height:1.7;
+  margin-bottom:32px;
+}
+.success-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:22px 28px;
+  text-align:left;
+  margin-bottom:24px;
+}
+.sc2-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 0;
+  border-bottom:1px solid var(--border);
+  font-size:13px;
+}
+.sc2-row:last-child{border-bottom:none}
+.sc2-key{color:var(--muted)}
+.sc2-val{font-weight:600}
+.success-note{
+  font-size:12px;color:var(--muted);
+  background:var(--amber-s);
+  border:1px solid rgba(217,119,6,.2);
+  border-radius:9px;
+  padding:12px 16px;
+  line-height:1.6;
+  margin-bottom:28px;
+}
+
+/* ── NAV BUTTONS ─────────────────────────── */
+.nav-bar{
+  max-width:960px;
+  margin:0 auto;
+  padding:0 28px 48px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.nav-bar.right{justify-content:flex-end}
+
+/* ── SCROLLBAR ───────────────────────────── */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     STEP INDICATOR
+══════════════════════════════════════ -->
+<div class="steps-bar">
+  <div class="steps-inner">
+    <div class="logo-sm">
+      <div class="dot">🌿</div>
+      Red de Mentores
+    </div>
+
+    <div class="steps">
+      <div class="step active" id="s1">
+        <div class="step-n">1</div>
+        Buscar mentor
+      </div>
+      <div class="step-connector" id="conn1"></div>
+      <div class="step" id="s2">
+        <div class="step-n">2</div>
+        Ver perfil
+      </div>
+      <div class="step-connector" id="conn2"></div>
+      <div class="step" id="s3">
+        <div class="step-n">3</div>
+        Confirmar sesión
+      </div>
+    </div>
+
+    <div style="width:160px"></div><!-- balance -->
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     PANTALLA 1 — BÚSQUEDA
+══════════════════════════════════════ -->
+<div class="screen active" id="screen-1">
+
+  <div class="hero-1">
+    <div class="hero-1-inner">
+      <div class="hero-eyebrow">
+        <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4"/></svg>
+        47 mentores disponibles ahora
+      </div>
+      <h1>Aprende de quien<br>ya lo vivió.</h1>
+      <p>Conecta con profesionales con décadas de experiencia real. Elige área, revisa el perfil y agenda en minutos.</p>
+      <div class="hero-stats">
+        <div>
+          <div class="h-stat-n">847</div>
+          <div class="h-stat-l">Mentores</div>
+        </div>
+        <div>
+          <div class="h-stat-n">4.9</div>
+          <div class="h-stat-l">Rating prom.</div>
+        </div>
+        <div>
+          <div class="h-stat-n">35+</div>
+          <div class="h-stat-l">Años exp. prom.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="filter-row">
+    <span class="filter-label-text">Área:</span>
+    <div class="fchip active" onclick="filterChip(this)">Negocios</div>
+    <div class="fchip" onclick="filterChip(this)">Tecnología</div>
+    <div class="fchip" onclick="filterChip(this)">Diseño</div>
+    <div class="fchip" onclick="filterChip(this)">Derecho</div>
+    <div class="fchip" onclick="filterChip(this)">Finanzas</div>
+    <div class="fchip" onclick="filterChip(this)">Ingeniería</div>
+  </div>
+
+  <div class="search-row">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input type="text" placeholder="Busca por nombre, empresa anterior, especialidad…">
+  </div>
+
+  <div class="result-grid">
+
+    <!-- Card 1 -->
+    <div class="mcard selected" id="card-jorge" onclick="selectCard('card-jorge')">
+      <div class="mcard-stripe"></div>
+      <div class="mcard-body">
+        <div class="mcard-head">
+          <div class="mcard-avwrap">
+            <div class="av av-c1" style="width:52px;height:52px;font-size:18px">JR</div>
+            <div class="online-dot"></div>
+          </div>
+          <div>
+            <div class="mc-name">Jorge Reyes</div>
+            <div class="mc-role">Ex-Director Financiero · Banca comercial</div>
+            <div class="mc-exp">35 años de experiencia</div>
+          </div>
+        </div>
+        <div class="mcard-tags">
+          <span class="tag tag-amber">Finanzas</span>
+          <span class="tag tag-sage">M&A</span>
+          <span class="tag tag-n">Inversión</span>
+        </div>
+        <div class="mcard-footer">
+          <span class="stars">★★★★★</span>
+          <span class="rating">4.9</span>
+          <span class="sessions">128 sesiones</span>
+        </div>
+        <button class="ver-btn" onclick="goToProfile()">Ver perfil y agendar →</button>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="mcard" id="card-maria" onclick="selectCard('card-maria')">
+      <div class="mcard-stripe s2"></div>
+      <div class="mcard-body">
+        <div class="mcard-head">
+          <div class="mcard-avwrap">
+            <div class="av av-c2" style="width:52px;height:52px;font-size:18px">MC</div>
+            <div class="online-dot"></div>
+          </div>
+          <div>
+            <div class="mc-name">María Contreras</div>
+            <div class="mc-role">Ex-CEO · Retail y consumo masivo</div>
+            <div class="mc-exp">28 años de experiencia</div>
+          </div>
+        </div>
+        <div class="mcard-tags">
+          <span class="tag tag-amber">Estrategia</span>
+          <span class="tag tag-sage">Liderazgo</span>
+          <span class="tag tag-n">Retail</span>
+        </div>
+        <div class="mcard-footer">
+          <span class="stars">★★★★★</span>
+          <span class="rating">5.0</span>
+          <span class="sessions">204 sesiones</span>
+        </div>
+        <button class="ver-btn" onclick="goToProfile()">Ver perfil y agendar →</button>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="mcard" id="card-roberto" onclick="selectCard('card-roberto')">
+      <div class="mcard-stripe s3"></div>
+      <div class="mcard-body">
+        <div class="mcard-head">
+          <div class="mcard-avwrap">
+            <div class="av av-c3" style="width:52px;height:52px;font-size:18px">RA</div>
+            <div class="online-dot" style="background:#F59E0B"></div>
+          </div>
+          <div>
+            <div class="mc-name">Roberto Armas</div>
+            <div class="mc-role">Ex-VP Operaciones · Manufactura</div>
+            <div class="mc-exp">22 años de experiencia</div>
+          </div>
+        </div>
+        <div class="mcard-tags">
+          <span class="tag tag-amber">Logística</span>
+          <span class="tag tag-n">Supply chain</span>
+        </div>
+        <div class="mcard-footer">
+          <span class="stars">★★★★☆</span>
+          <span class="rating">4.7</span>
+          <span class="sessions">89 sesiones</span>
+        </div>
+        <button class="ver-btn" onclick="goToProfile()">Ver perfil y agendar →</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- nav bar 1 -->
+<div class="nav-bar right" id="nav-1">
+  <button class="btn btn-dark btn-lg" onclick="goToProfile()">
+    Ver perfil de Jorge Reyes
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+    </svg>
+  </button>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     PANTALLA 2 — PERFIL
+══════════════════════════════════════ -->
+<div class="screen" id="screen-2">
+
+  <div style="margin-bottom:24px">
+    <div class="screen-label">Paso 2 de 3</div>
+    <div class="screen-title">Perfil del mentor</div>
+    <div class="screen-sub">Lee la trayectoria, elige el tipo de sesión y selecciona un horario disponible.</div>
+  </div>
+
+  <div class="profile-layout">
+
+    <!-- LEFT: perfil completo -->
+    <div>
+      <div class="profile-card">
+        <div class="profile-cover">
+          <div class="profile-avwrap">
+            <div class="av av-c1" style="width:72px;height:72px;font-size:26px">JR</div>
+          </div>
+        </div>
+        <div class="profile-header">
+          <div class="profile-name">Jorge Reyes</div>
+          <div class="profile-role">Ex-Director Financiero · Banca comercial · Santiago, Chile</div>
+          <div class="profile-badges">
+            <span class="tag tag-amber">35 años exp.</span>
+            <span class="tag tag-sage">Disponible hoy</span>
+            <span class="tag tag-n">★ 4.9 · 128 sesiones</span>
+          </div>
+          <div class="profile-actions">
+            <button class="btn btn-dark" onclick="goToConfirm()">Agendar sesión</button>
+            <button class="btn btn-outline">Enviar mensaje</button>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="ps-title">Sobre Jorge</div>
+          <p class="ps-bio">35 años dirigiendo áreas financieras en banca comercial y empresas de capital privado. Participé en más de 40 operaciones de M&A en México y Chile. Hoy mentoree a emprendedores y jóvenes profesionales que quieren entender el mundo financiero desde adentro, no desde un libro.</p>
+        </div>
+
+        <div class="profile-section">
+          <div class="ps-title">Trayectoria</div>
+          <div class="career-timeline">
+            <div class="career-item">
+              <div class="ci-line"><div class="ci-dot"></div><div class="ci-tail"></div></div>
+              <div class="ci-body">
+                <div class="ci-role">Director Financiero</div>
+                <div class="ci-org">Banco de Chile </div>
+                <div class="ci-years">2008 – 2021 · 13 años</div>
+              </div>
+            </div>
+            <div class="career-item">
+              <div class="ci-line"><div class="ci-dot"></div><div class="ci-tail"></div></div>
+              <div class="ci-body">
+                <div class="ci-role">VP de Finanzas Corporativas</div>
+                <div class="ci-org">Grupo Alfa</div>
+                <div class="ci-years">1998 – 2008 · 10 años</div>
+              </div>
+            </div>
+            <div class="career-item">
+              <div class="ci-line"><div class="ci-dot"></div></div>
+              <div class="ci-body">
+                <div class="ci-role">Analista Senior de Inversiones</div>
+                <div class="ci-org">BBVA México</div>
+                <div class="ci-years">1989 – 1998 · 9 años</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="ps-title">Lo que puedo aportar</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <span class="tag tag-amber">Análisis financiero</span>
+            <span class="tag tag-amber">Fusiones y adquisiciones</span>
+            <span class="tag tag-sage">Modelos de negocio</span>
+            <span class="tag tag-sage">Estrategia de capital</span>
+            <span class="tag tag-n">Negociación</span>
+            <span class="tag tag-n">Pitch para inversores</span>
+          </div>
+        </div>
+
+        <div class="profile-section">
+          <div class="ps-title">Reseñas recientes</div>
+          <div class="reviews">
+            <div class="review">
+              <div class="rv-header">
+                <div class="av av-c2" style="width:24px;height:24px;font-size:9px">LM</div>
+                <span class="rv-name">Laura M. · Emprendedora</span>
+                <span class="rv-stars">★★★★★</span>
+              </div>
+              <div class="rv-text">"Jorge transformó mi forma de leer un balance. En dos sesiones entendí más que en un semestre universitario."</div>
+            </div>
+            <div class="review">
+              <div class="rv-header">
+                <div class="av av-c3" style="width:24px;height:24px;font-size:9px">PE</div>
+                <span class="rv-name">Pedro E. · Estudiante MBA</span>
+                <span class="rv-stars">★★★★★</span>
+              </div>
+              <div class="rv-text">"Muy concreto, sin rodeos. Te dice lo que nadie te dice en la academia. Exactamente lo que necesitaba."</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: booking sidebar -->
+    <div class="booking-sidebar">
+      <div class="bs-header">
+        <div class="bs-header-title">Tipo de sesión</div>
+        <div class="bs-session-type">
+          <div class="st-chip active" onclick="selectType(this)">1 a 1</div>
+          <div class="st-chip" onclick="selectType(this)">Grupal</div>
+          <div class="st-chip" onclick="selectType(this)">Charla</div>
+        </div>
+      </div>
+
+      <div class="bs-slots">
+        <div class="bs-slots-title">Disponibilidad esta semana</div>
+        <div class="slot selected" onclick="selectSlot(this)">
+          <div class="slot-dot"></div>
+          <div class="slot-time">Hoy · 15:00 – 16:00</div>
+          <div class="slot-dur">60 min</div>
+        </div>
+        <div class="slot" onclick="selectSlot(this)">
+          <div class="slot-dot"></div>
+          <div class="slot-time">Mié · 10:00 – 11:00</div>
+          <div class="slot-dur">60 min</div>
+        </div>
+        <div class="slot" onclick="selectSlot(this)">
+          <div class="slot-dot"></div>
+          <div class="slot-time">Vie · 09:00 – 10:30</div>
+          <div class="slot-dur">90 min</div>
+        </div>
+      </div>
+
+      <div class="bs-cta">
+        <div class="bs-note">Sesión gratuita para el primer contacto. Sin tarjeta requerida.</div>
+        <button class="btn btn-amber btn-lg" onclick="goToConfirm()">
+          Continuar con este horario
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- nav bar 2 -->
+<div class="nav-bar" id="nav-2" style="display:none">
+  <button class="btn btn-outline" onclick="goBack(1)">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+    </svg>
+    Volver a búsqueda
+  </button>
+  <button class="btn btn-dark btn-lg" onclick="goToConfirm()">
+    Confirmar horario
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+    </svg>
+  </button>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     PANTALLA 3 — CONFIRMACIÓN
+══════════════════════════════════════ -->
+<div class="screen" id="screen-3">
+
+  <div style="margin-bottom:28px">
+    <div class="screen-label">Paso 3 de 3 — Último paso</div>
+    <div class="screen-title">Confirma tu sesión</div>
+    <div class="screen-sub">Solo necesitamos un contexto breve para que Jorge llegue preparado.</div>
+  </div>
+
+  <!-- Hipótesis visible — solo para presentación -->
+  <div class="hypothesis-box" style="margin-bottom:28px">
+    <div class="hb-icon">💡</div>
+    <div class="hb-text">
+      <strong>Hipótesis que validamos aquí:</strong> los jóvenes están dispuestos a agendar una sesión con un profesional si pueden ver su trayectoria real y elegir un horario conveniente. Este paso mide intención de compromiso.
+    </div>
+  </div>
+
+  <div class="confirm-layout">
+
+    <!-- LEFT: form -->
+    <div class="form-card">
+      <div class="form-section">
+        <div class="form-section-title">Tu información</div>
+        <div class="form-row">
+          <div class="fg">
+            <label class="fl">Nombre</label>
+            <input class="fi" type="text" placeholder="Ana Molina">
+          </div>
+          <div class="fg">
+            <label class="fl">Correo</label>
+            <input class="fi" type="email" placeholder="ana@ejemplo.com">
+          </div>
+        </div>
+        <div class="fg">
+          <label class="fl">¿Desde dónde te unes?</label>
+          <select class="fs">
+            <option>Santiago, Chile</option>
+            <option>Santiago, Chile</option>
+            <option>Buenos Aires, Argentina</option>
+            <option>Bogotá, Colombia</option>
+            <option>Otro</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Contexto de la sesión</div>
+        <div class="fg">
+          <label class="fl">¿Qué quieres trabajar en esta sesión?</label>
+          <textarea class="fta" placeholder="Ej: Tengo un modelo financiero para mi startup y quiero que alguien con experiencia real lo revise antes de presentarlo a inversionistas…"></textarea>
+        </div>
+        <div class="fg">
+          <label class="fl">¿En qué etapa estás?</label>
+          <select class="fs">
+            <option>Estudiante universitario</option>
+            <option>Recién egresado</option>
+            <option>Profesional con 1-3 años</option>
+            <option>Emprendedor en etapa temprana</option>
+            <option>Otro</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: summary -->
+    <div class="summary-card">
+      <div class="sc-header">
+        <div class="sc-label">Resumen de tu sesión</div>
+        <div class="sc-mentor-row">
+          <div class="av av-c1" style="width:44px;height:44px;font-size:16px">JR</div>
+          <div>
+            <div class="sc-mentor-name">Jorge Reyes</div>
+            <div class="sc-mentor-role">Ex-Director Financiero · 35 años exp.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sc-body">
+        <div class="sc-item">
+          <span class="sc-key">Tipo de sesión</span>
+          <span class="sc-val">1 a 1 · Online</span>
+        </div>
+        <div class="sc-item">
+          <span class="sc-key">Fecha y hora</span>
+          <span class="sc-val">Hoy, 27 mayo<br>15:00 – 16:00</span>
+        </div>
+        <div class="sc-item">
+          <span class="sc-key">Duración</span>
+          <span class="sc-val">60 minutos</span>
+        </div>
+        <div class="sc-item">
+          <span class="sc-key">Costo</span>
+          <span class="sc-val highlight">Gratuito</span>
+        </div>
+        <div class="sc-item">
+          <span class="sc-key">Plataforma</span>
+          <span class="sc-val">Google Meet<br>(enlace al confirmar)</span>
+        </div>
+      </div>
+
+      <div class="sc-footer">
+        <div class="sc-footer-label">¿Por qué es gratis?</div>
+        <div class="sc-footer-text">Por esta vez la primera sesión será sin costo.</div>
+      </div>
+
+      <div class="confirm-actions">
+        <button class="btn btn-amber btn-lg" onclick="goToSuccess()">
+          Confirmar sesión con Jorge
+        </button>
+        <div class="confirm-note">Recibirás un correo con el enlace y los materiales preparatorios.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- nav bar 3 -->
+<div class="nav-bar" id="nav-3" style="display:none">
+  <button class="btn btn-outline" onclick="goBack(2)">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+    </svg>
+    Volver al perfil
+  </button>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     PANTALLA SUCCESS
+══════════════════════════════════════ -->
+<div class="screen" id="screen-success">
+  <div class="success-wrap">
+    <div class="success-icon">✓</div>
+    <div class="success-title">¡Sesión confirmada!</div>
+    <div class="success-sub">Tu sesión con Jorge está agendada para hoy a las 15:00. Él ya recibió tu contexto y llegará preparado.</div>
+
+    <div class="success-card">
+      <div class="sc2-row">
+        <span class="sc2-key">Mentor</span>
+        <span class="sc2-val">Jorge Reyes</span>
+      </div>
+      <div class="sc2-row">
+        <span class="sc2-key">Fecha</span>
+        <span class="sc2-val">Hoy · 15:00 – 16:00</span>
+      </div>
+      <div class="sc2-row">
+        <span class="sc2-key">Formato</span>
+        <span class="sc2-val">1 a 1 · Google Meet</span>
+      </div>
+      <div class="sc2-row">
+        <span class="sc2-key">Costo</span>
+        <span class="sc2-val" style="color:var(--sage)">Gratuito</span>
+      </div>
+    </div>
+
+    <div class="success-note">
+      Enviamos el enlace de Google Meet y una guía breve de preparación a tu correo. Jorge también recibirá tu contexto antes de la sesión.
+    </div>
+
+    <button class="btn btn-dark btn-lg" style="width:100%;justify-content:center" onclick="restart()">
+      Explorar más mentores
+    </button>
+  </div>
+</div>
+
+
+<script>
+/* ── STEP NAVIGATION ─────────────────── */
+let current = 1;
+
+function setStep(n) {
+  // hide all screens & navbars
+  [1,2,3].forEach(i => {
+    document.getElementById('screen-' + i).classList.remove('active');
+    const nb = document.getElementById('nav-' + i);
+    if(nb) nb.style.display = 'none';
+  });
+  document.getElementById('screen-success').classList.remove('active');
+
+  if(n === 'success'){
+    document.getElementById('screen-success').classList.add('active');
+    // update steps
+    ['s1','s2','s3'].forEach(s => {
+      document.getElementById(s).classList.remove('active');
+      document.getElementById(s).classList.add('done');
+    });
+    document.getElementById('conn1').style.background = 'var(--sage)';
+    document.getElementById('conn2').style.background = 'var(--sage)';
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+
+  document.getElementById('screen-' + n).classList.add('active');
+  const nb = document.getElementById('nav-' + n);
+  if(nb) nb.style.display = 'flex';
+
+  // update step indicators
+  for(let i=1;i<=3;i++){
+    const el = document.getElementById('s'+i);
+    el.classList.remove('active','done');
+    if(i < n) el.classList.add('done');
+    else if(i === n) el.classList.add('active');
+  }
+  document.getElementById('conn1').style.background = n > 1 ? 'var(--sage)' : 'var(--border)';
+  document.getElementById('conn2').style.background = n > 2 ? 'var(--sage)' : 'var(--border)';
+
+  current = n;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function goToProfile()  { setStep(2); }
+function goToConfirm()  { setStep(3); }
+function goToSuccess()  { setStep('success'); }
+function goBack(n)      { setStep(n); }
+function restart()      { setStep(1); }
+
+/* ── CARD SELECTION ──────────────────── */
+function selectCard(id){
+  ['card-jorge','card-maria','card-roberto'].forEach(c => {
+    document.getElementById(c).classList.remove('selected');
+  });
+  document.getElementById(id).classList.add('selected');
+}
+
+/* ── FILTER CHIPS ────────────────────── */
+function filterChip(el){
+  el.closest('.filter-row').querySelectorAll('.fchip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* ── SLOT SELECTION ──────────────────── */
+function selectSlot(el){
+  el.closest('.bs-slots').querySelectorAll('.slot').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+/* ── SESSION TYPE ────────────────────── */
+function selectType(el){
+  el.closest('.bs-session-type').querySelectorAll('.st-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>
