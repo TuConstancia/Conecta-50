@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Red de Mentores — Flujo de agendamiento</title>
+<title>Conecta+50 — Flujo de agendamiento</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <style>
@@ -42,6 +42,7 @@ body{
   background:var(--surface);
   border-bottom:1px solid var(--border);
   padding:0 0;
+  display: none; /* Oculto inicialmente para la pantalla de bienvenida */
 }
 .steps-inner{
   max-width:960px;
@@ -185,8 +186,6 @@ body{
 /* ═══════════════════════════════════════════
    PANTALLA 1 — BÚSQUEDA
 ═══════════════════════════════════════════ */
-
-/* Hero */
 .hero-1{
   background:var(--ink);
   border-radius:var(--r-lg);
@@ -233,7 +232,6 @@ body{
   color:rgba(255,255,255,.4);margin-top:3px;
 }
 
-/* Filtros */
 .filter-row{
   display:flex;align-items:center;gap:10px;
   margin-bottom:24px;
@@ -261,7 +259,6 @@ body{
   color:#fff;
 }
 
-/* Search bar */
 .search-row{
   position:relative;
   margin-bottom:28px;
@@ -285,7 +282,6 @@ body{
   color:var(--muted);pointer-events:none;
 }
 
-/* Result grid */
 .result-grid{
   display:grid;
   grid-template-columns:repeat(3,1fr);
@@ -309,16 +305,6 @@ body{
   border:2px solid var(--amber);
   box-shadow:0 0 0 3px rgba(217,119,6,.12);
 }
-/* Estilos para mentores no disponibles */
-.mcard.disabled {
-  opacity: 0.55;
-  filter: grayscale(100%);
-  pointer-events: none;
-  cursor: not-allowed;
-  transform: none !important;
-  box-shadow: none !important;
-}
-
 .mcard-stripe{height:5px;background:var(--amber)}
 .mcard-stripe.s2{background:var(--sage)}
 .mcard-stripe.s3{background:var(--amber-d)}
@@ -390,7 +376,6 @@ body{
   align-items:start;
 }
 
-/* Left: profile card */
 .profile-card{
   background:var(--surface);
   border:1px solid var(--border);
@@ -447,7 +432,6 @@ body{
   line-height:1.75;
 }
 
-/* Timeline de carrera */
 .career-timeline{
   display:flex;flex-direction:column;gap:14px;
 }
@@ -484,7 +468,6 @@ body{
   display:inline-block;
 }
 
-/* Reviews */
 .reviews{display:flex;flex-direction:column;gap:10px}
 .review{
   background:var(--s2);
@@ -502,7 +485,6 @@ body{
   line-height:1.65;font-style:italic;
 }
 
-/* Right: booking sidebar */
 .booking-sidebar{
   background:var(--surface);
   border:1px solid var(--border);
@@ -596,7 +578,6 @@ body{
   align-items:start;
 }
 
-/* Left: form */
 .form-card{
   background:var(--surface);
   border:1px solid var(--border);
@@ -635,7 +616,6 @@ body{
 .fta{resize:vertical;min-height:80px}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 
-/* hipótesis callout */
 .hypothesis-box{
   background:var(--amber-s);
   border:1.5px solid rgba(217,119,6,.3);
@@ -654,7 +634,6 @@ body{
 }
 .hb-text strong{font-weight:700}
 
-/* Right: summary card */
 .summary-card{
   background:var(--ink);
   border-radius:var(--r-lg);
@@ -713,7 +692,6 @@ body{
   line-height:1.55;
 }
 
-/* Confirm btn area */
 .confirm-actions{
   padding:20px 24px 24px;
   display:flex;flex-direction:column;gap:8px;
@@ -795,6 +773,78 @@ body{
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+
+/* ═══════════════════════════════════════════
+   CONFIGURACIÓN OPTIMIZADA PARA CELULAR
+═══════════════════════════════════════════ */
+body.mobile-mode {
+  font-size: 14px;
+}
+body.mobile-mode .steps-inner {
+  padding: 0 16px;
+}
+body.mobile-mode .logo-sm {
+  font-size: 12px;
+}
+body.mobile-mode .steps {
+  position: static;
+  transform: none;
+  gap: 2px;
+}
+body.mobile-mode .step {
+  padding: 4px 6px;
+  font-size: 0; /* Oculta el texto largo para que quepa en pantallas chicas */
+}
+body.mobile-mode .step .step-n {
+  font-size: 11px;
+  width: 22px; height: 22px;
+}
+body.mobile-mode .step-connector {
+  width: 14px;
+}
+body.mobile-mode .screen {
+  padding: 24px 16px 60px;
+}
+body.mobile-mode .hero-1 {
+  padding: 24px 20px;
+}
+body.mobile-mode .hero-1 h1 {
+  font-size: 24px;
+}
+body.mobile-mode .hero-stats {
+  flex-direction: column;
+  gap: 12px;
+}
+body.mobile-mode .result-grid {
+  grid-template-columns: 1fr; /* Columna única */
+}
+body.mobile-mode .profile-layout {
+  grid-template-columns: 1fr; /* Apilado vertical */
+}
+body.mobile-mode .booking-sidebar {
+  position: static;
+  margin-top: 24px;
+}
+body.mobile-mode .confirm-layout {
+  grid-template-columns: 1fr; /* Apilado vertical */
+}
+body.mobile-mode .summary-card {
+  position: static;
+  margin-top: 24px;
+}
+body.mobile-mode .form-row {
+  grid-template-columns: 1fr;
+}
+body.mobile-mode .nav-bar {
+  padding: 0 16px 32px;
+  flex-direction: column-reverse;
+  gap: 12px;
+}
+body.mobile-mode .nav-bar .btn {
+  width: 100%;
+  justify-content: center;
+}
 </style>
 </head>
 <body>
@@ -803,7 +853,7 @@ body{
   <div class="steps-inner">
     <div class="logo-sm">
       <div class="dot">🌿</div>
-      Red de Mentores
+      Conecta+50
     </div>
 
     <div class="steps">
@@ -823,11 +873,42 @@ body{
       </div>
     </div>
 
-    <div style="width:160px"></div></div>
+    <div style="width:120px" class="balance-space"></div>
+  </div>
 </div>
 
 
-<div class="screen active" id="screen-1">
+<div class="screen active" id="screen-0">
+  <div class="success-wrap" style="margin: 30px auto; max-width: 580px;">
+    <div style="font-size: 44px; margin-bottom: 14px;">👋</div>
+    <h1 class="success-title" style="font-family:'Playfair Display',serif; font-size: 34px;">Bienvenido a Conecta+50</h1>
+    <p class="success-sub" style="margin-bottom: 36px; font-size: 14.5px;">Para ofrecerte la mejor visibilidad, adaptabilidad y una experiencia de aprendizaje cómoda, indícanos el tipo de pantalla que estás usando:</p>
+    
+    <div style="display: flex; flex-direction: column; gap: 16px; text-align: left; margin-bottom: 24px;">
+      
+      <div class="mcard" style="padding: 22px; display: flex; align-items: center; gap: 20px;" onclick="selectDevice('mobile')">
+        <div style="font-size: 36px; background: var(--s2); padding: 12px; border-radius: 12px; min-width: 64px; text-align: center;">📱</div>
+        <div>
+          <div style="font-weight: 600; font-size: 16px; margin-bottom: 3px; color: var(--ink);">Teléfono Celular</div>
+          <p style="font-size: 12.5px; color: var(--muted); line-height: 1.4;">Optimiza menús, textos más legibles y organiza todo en un flujo vertical cómodo para un dedo.</p>
+        </div>
+      </div>
+
+      <div class="mcard" style="padding: 22px; display: flex; align-items: center; gap: 20px;" onclick="selectDevice('desktop')">
+        <div style="font-size: 36px; background: var(--s2); padding: 12px; border-radius: 12px; min-width: 64px; text-align: center;">💻</div>
+        <div>
+          <div style="font-weight: 600; font-size: 16px; margin-bottom: 3px; color: var(--ink);">Pantalla Grande / Computador</div>
+          <p style="font-size: 12.5px; color: var(--muted); line-height: 1.4;">Habilita la distribución multicolumna expandida, paneles laterales fijos y cuadrículas amplias.</p>
+        </div>
+      </div>
+
+    </div>
+    <p style="font-size: 11px; color: var(--muted); font-style: italic;">Perfil de visualización: Modo Aprendiz (Cliente)</p>
+  </div>
+</div>
+
+
+<div class="screen" id="screen-1">
 
   <div class="hero-1">
     <div class="hero-1-inner">
@@ -836,7 +917,7 @@ body{
         47 mentores disponibles ahora
       </div>
       <h1>Aprende de quien<br>ya lo vivió.</h1>
-      <p>Conecta con profesionales con décadas de experiencia real. Elige área, revisa el perfil y agenda en minutos.</p>
+      <p>Conecta con profesionales con décadas de experiencia real. Elige tu área, revisa el perfil del mentor y agenda tu sesión en minutos.</p>
       <div class="hero-stats">
         <div>
           <div class="h-stat-n">847</div>
@@ -901,7 +982,7 @@ body{
       </div>
     </div>
 
-    <div class="mcard disabled" id="card-maria">
+    <div class="mcard" id="card-maria" onclick="selectCard('card-maria')">
       <div class="mcard-stripe s2"></div>
       <div class="mcard-body">
         <div class="mcard-head">
@@ -925,11 +1006,11 @@ body{
           <span class="rating">5.0</span>
           <span class="sessions">204 sesiones</span>
         </div>
-        <button class="ver-btn">No disponible</button>
+        <button class="ver-btn" onclick="goToProfile()">Ver perfil y agendar →</button>
       </div>
     </div>
 
-    <div class="mcard disabled" id="card-roberto">
+    <div class="mcard" id="card-roberto" onclick="selectCard('card-roberto')">
       <div class="mcard-stripe s3"></div>
       <div class="mcard-body">
         <div class="mcard-head">
@@ -952,14 +1033,14 @@ body{
           <span class="rating">4.7</span>
           <span class="sessions">89 sesiones</span>
         </div>
-        <button class="ver-btn">No disponible</button>
+        <button class="ver-btn" onclick="goToProfile()">Ver perfil y agendar →</button>
       </div>
     </div>
 
   </div>
 </div>
 
-<div class="nav-bar right" id="nav-1">
+<div class="nav-bar right" id="nav-1" style="display:none">
   <button class="btn btn-dark btn-lg" onclick="goToProfile()">
     Ver perfil de Jorge Reyes
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -974,7 +1055,7 @@ body{
   <div style="margin-bottom:24px">
     <div class="screen-label">Paso 2 de 3</div>
     <div class="screen-title">Perfil del mentor</div>
-    <div class="screen-sub">Lee la trayectoria, elige el tipo de sesión y selecciona un horario disponible.</div>
+    <div class="screen-sub">Lee la trayectoria del mentor, elige la modalidad y selecciona un horario cómodo.</div>
   </div>
 
   <div class="profile-layout">
@@ -1002,7 +1083,7 @@ body{
 
         <div class="profile-section">
           <div class="ps-title">Sobre Jorge</div>
-          <p class="ps-bio">35 años dirigiendo áreas financieras en banca comercial y empresas de capital privado. Participé en más de 40 operaciones de M&A en México y Chile. Hoy mentoree a emprendedores y jóvenes profesionales que quieren entender el mundo financiero desde adentro, no desde un libro.</p>
+          <p class="ps-bio">35 años dirigiendo áreas financieras en banca comercial y empresas de capital privado. Participé en más de 40 operaciones de M&A en México y Chile. Hoy mentoreo a emprendedores y profesionales que buscan entender el ecosistema estratégico y financiero real desde adentro.</p>
         </div>
 
         <div class="profile-section">
@@ -1048,7 +1129,7 @@ body{
         </div>
 
         <div class="profile-section">
-          <div class="ps-title">Reseñas recientes</div>
+          <div class="ps-title">Reseñas de otros aprendices</div>
           <div class="reviews">
             <div class="review">
               <div class="rv-header">
@@ -1056,7 +1137,7 @@ body{
                 <span class="rv-name">Laura M. · Emprendedora</span>
                 <span class="rv-stars">★★★★★</span>
               </div>
-              <div class="rv-text">"Jorge transformó mi forma de leer un balance. En dos sesiones entendí más que en un semestre universitario."</div>
+              <div class="rv-text">"Jorge transformó mi forma de leer un balance. En dos sesiones entendí más que en un semestre universitario completo."</div>
             </div>
             <div class="review">
               <div class="rv-header">
@@ -1064,7 +1145,7 @@ body{
                 <span class="rv-name">Pedro E. · Estudiante MBA</span>
                 <span class="rv-stars">★★★★★</span>
               </div>
-              <div class="rv-text">"Muy concreto, sin rodeos. Te dice lo que nadie te dice en la academia. Exactamente lo que necesitaba."</div>
+              <div class="rv-text">"Muy concreto, sin rodeos. Te explica lo que nadie te dice en la teoría. Excelente mentor."</div>
             </div>
           </div>
         </div>
@@ -1101,7 +1182,7 @@ body{
       </div>
 
       <div class="bs-cta">
-        <div class="bs-note">Sesión gratuita para el primer contacto. Sin tarjeta requerida.</div>
+        <div class="bs-note">Sesión gratuita para el primer contacto como aprendiz.</div>
         <button class="btn btn-amber btn-lg" onclick="goToConfirm()">
           Continuar con este horario
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -1135,13 +1216,13 @@ body{
   <div style="margin-bottom:28px">
     <div class="screen-label">Paso 3 de 3 — Último paso</div>
     <div class="screen-title">Confirma tu sesión</div>
-    <div class="screen-sub">Solo necesitamos un contexto breve para que Jorge llegue preparado.</div>
+    <div class="screen-sub">Solo necesitamos un contexto breve sobre ti para que tu mentor llegue preparado.</div>
   </div>
 
   <div class="hypothesis-box" style="margin-bottom:28px">
     <div class="hb-icon">💡</div>
     <div class="hb-text">
-      <strong>Hipótesis que validamos aquí:</strong> los jóvenes están dispuestos a agendar una sesión con un profesional si pueden ver su trayectoria real y elegir un horario conveniente. Este paso mide intención de compromiso.
+      <strong>Validación de Experiencia de Cliente:</strong> Este paso recopila tus necesidades y evalúa el nivel de compromiso e interés real del aprendiz antes de agendar.
     </div>
   </div>
 
@@ -1149,21 +1230,20 @@ body{
 
     <div class="form-card">
       <div class="form-section">
-        <div class="form-section-title">Tu información</div>
+        <div class="form-section-title">Tu información de contacto</div>
         <div class="form-row">
           <div class="fg">
-            <label class="fl">Nombre</label>
+            <label class="fl">Nombre completo</label>
             <input class="fi" type="text" placeholder="Ana Molina">
           </div>
           <div class="fg">
-            <label class="fl">Correo</label>
+            <label class="fl">Correo electrónico</label>
             <input class="fi" type="email" placeholder="ana@ejemplo.com">
           </div>
         </div>
         <div class="fg">
           <label class="fl">¿Desde dónde te unes?</label>
           <select class="fs">
-            <option>Santiago, Chile</option>
             <option>Santiago, Chile</option>
             <option>Buenos Aires, Argentina</option>
             <option>Bogotá, Colombia</option>
@@ -1173,17 +1253,17 @@ body{
       </div>
 
       <div class="form-section">
-        <div class="form-section-title">Contexto de la sesión</div>
+        <div class="form-section-title">Objetivo de la sesión</div>
         <div class="fg">
           <label class="fl">¿Qué quieres trabajar en esta sesión?</label>
-          <textarea class="fta" placeholder="Ej: Tengo un modelo financiero para mi startup y quiero que alguien con experiencia real lo revise antes de presentarlo a inversionistas…"></textarea>
+          <textarea class="fta" placeholder="Ej: Tengo un modelo financiero para mi proyecto y quiero que alguien con experiencia real lo revise antes de presentarlo a inversionistas…"></textarea>
         </div>
         <div class="fg">
-          <label class="fl">¿En qué etapa estás?</label>
+          <label class="fl">¿En qué etapa te encuentras?</label>
           <select class="fs">
             <option>Estudiante universitario</option>
             <option>Recién egresado</option>
-            <option>Profesional con 1-3 años</option>
+            <option>Profesional con 1-3 años de experiencia</option>
             <option>Emprendedor en etapa temprana</option>
             <option>Otro</option>
           </select>
@@ -1227,15 +1307,15 @@ body{
       </div>
 
       <div class="sc-footer">
-        <div class="sc-footer-label">¿Por qué es gratis?</div>
-        <div class="sc-footer-text">Por esta vez la primera sesión será sin costo.</div>
+        <div class="sc-footer-label">Beneficio Conecta+50</div>
+        <div class="sc-footer-text">Por ser tu primer contacto, esta mentoría no tiene costo.</div>
       </div>
 
       <div class="confirm-actions">
         <button class="btn btn-amber btn-lg" onclick="goToSuccess()">
           Confirmar sesión con Jorge
         </button>
-        <div class="confirm-note">Recibirás un correo con el enlace y los materiales preparatorios.</div>
+        <div class="confirm-note">Recibirás un acceso de Google Meet en tu correo.</div>
       </div>
     </div>
 
@@ -1256,77 +1336,92 @@ body{
   <div class="success-wrap">
     <div class="success-icon">✓</div>
     <div class="success-title">¡Sesión confirmada!</div>
-    <div class="success-sub">Tu sesión con Jorge está agendada para hoy a las 15:00. Él ya recibió tu contexto y llegará preparado.</div>
+    <div class="success-sub">Tu mentoría en Conecta+50 está agendada para hoy a las 15:00. El mentor ya recibió tus notas del formulario.</div>
 
     <div class="success-card">
       <div class="sc2-row">
-        <span class="sc2-key">Mentor</span>
+        <span class="sc2-key">Mentor seleccionado</span>
         <span class="sc2-val">Jorge Reyes</span>
       </div>
       <div class="sc2-row">
-        <span class="sc2-key">Fecha</span>
+        <span class="sc2-key">Fecha y Horario</span>
         <span class="sc2-val">Hoy · 15:00 – 16:00</span>
       </div>
       <div class="sc2-row">
-        <span class="sc2-key">Formato</span>
+        <span class="sc2-key">Canal digital</span>
         <span class="sc2-val">1 a 1 · Google Meet</span>
       </div>
       <div class="sc2-row">
-        <span class="sc2-key">Costo</span>
+        <span class="sc2-key">Costo total</span>
         <span class="sc2-val" style="color:var(--sage)">Gratuito</span>
       </div>
     </div>
 
     <div class="success-note">
-      Enviamos el enlace de Google Meet y una guía breve de preparación a tu correo. Jorge también recibirá tu contexto antes de la sesión.
+      Enviamos las credenciales de la sala virtual de Google Meet y los datos de preparación a tu casilla de correo.
     </div>
 
     <button class="btn btn-dark btn-lg" style="width:100%;justify-content:center" onclick="restart()">
-      Explorar más mentores
+      Explorar otros mentores
     </button>
   </div>
 </div>
 
 
 <script>
-/* ── STEP NAVIGATION ─────────────────── */
-let current = 1;
+/* ── STEP NAVIGATION & DEVICE MANAGEMENT ── */
+let current = 0;
+
+function selectDevice(mode) {
+  if (mode === 'mobile') {
+    document.body.classList.add('mobile-mode');
+  } else {
+    document.body.classList.remove('mobile-mode');
+  }
+  // Una vez elegido el dispositivo, pasamos automáticamente al paso 1 (Búsqueda)
+  setStep(1);
+}
 
 function setStep(n) {
-  // hide all screens & navbars
-  [1,2,3].forEach(i => {
-    document.getElementById('screen-' + i).classList.remove('active');
+  // Control de visibilidad del Steps Indicator superior
+  if (n === 0 || n === 'success') {
+    document.querySelector('.steps-bar').style.display = 'none';
+  } else {
+    document.querySelector('.steps-bar').style.display = 'block';
+  }
+
+  // Ocultar todas las pantallas y barras de navegación secundarias
+  [0, 1, 2, 3].forEach(i => {
+    const scr = document.getElementById('screen-' + i);
+    if(scr) scr.classList.remove('active');
     const nb = document.getElementById('nav-' + i);
     if(nb) nb.style.display = 'none';
   });
   document.getElementById('screen-success').classList.remove('active');
 
+  // Comportamiento especial para pantalla de Éxito final
   if(n === 'success'){
     document.getElementById('screen-success').classList.add('active');
-    // update steps
-    ['s1','s2','s3'].forEach(s => {
-      document.getElementById(s).classList.remove('active');
-      document.getElementById(s).classList.add('done');
-    });
-    document.getElementById('conn1').style.background = 'var(--sage)';
-    document.getElementById('conn2').style.background = 'var(--sage)';
     window.scrollTo({top:0,behavior:'smooth'});
     return;
   }
 
+  // Activar pantalla elegida
   document.getElementById('screen-' + n).classList.add('active');
   const nb = document.getElementById('nav-' + n);
   if(nb) nb.style.display = 'flex';
 
-  // update step indicators
-  for(let i=1;i<=3;i++){
-    const el = document.getElementById('s'+i);
-    el.classList.remove('active','done');
-    if(i < n) el.classList.add('done');
-    else if(i === n) el.classList.add('active');
+  // Actualizar estados visuales de la barra de progreso
+  if (n > 0) {
+    for(let i=1; i<=3; i++){
+      const el = document.getElementById('s'+i);
+      el.classList.remove('active','done');
+      if(i < n) el.classList.add('done');
+      else if(i === n) el.classList.add('active');
+    }
+    document.getElementById('conn1').style.background = n > 1 ? 'var(--sage)' : 'var(--border)';
+    document.getElementById('conn2').style.background = n > 2 ? 'var(--sage)' : 'var(--border)';
   }
-  document.getElementById('conn1').style.background = n > 1 ? 'var(--sage)' : 'var(--border)';
-  document.getElementById('conn2').style.background = n > 2 ? 'var(--sage)' : 'var(--border)';
 
   current = n;
   window.scrollTo({top:0,behavior:'smooth'});
@@ -1336,7 +1431,7 @@ function goToProfile()  { setStep(2); }
 function goToConfirm()  { setStep(3); }
 function goToSuccess()  { setStep('success'); }
 function goBack(n)      { setStep(n); }
-function restart()      { setStep(1); }
+function restart()      { setStep(1); } // Reinicia directo a búsqueda manteniendo la config de pantalla activa
 
 /* ── CARD SELECTION ──────────────────── */
 function selectCard(id){
