@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Conecta +50</title>
+<title>Conecta+50 — Flujo de agendamiento</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <style>
@@ -862,6 +862,41 @@ body.mobile-mode .nav-bar .btn {
   padding: 4px 0;
   border-bottom: 1px solid var(--border);
 }
+/* ── ESTILOS PARA NUEVA PANTALLA DE BÚSQUEDA ── */
+.search-intent-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 28px 32px;
+  text-align: center;
+  margin: 12px 0 28px 0;
+}
+.search-intent-box .screen-title {
+  margin-bottom: 8px;
+}
+.search-intent-box .screen-sub {
+  margin-bottom: 24px;
+}
+.search-intent-box textarea {
+  width: 100%;
+  background: var(--s2);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color .2s;
+  min-height: 100px;
+  resize: vertical;
+}
+.search-intent-box textarea:focus {
+  border-color: var(--amber);
+}
+.search-intent-box .btn {
+  margin-top: 18px;
+}
 </style>
 </head>
 <body>
@@ -887,6 +922,11 @@ body.mobile-mode .nav-bar .btn {
       <div class="step" id="s3">
         <div class="step-n">3</div>
         Confirmar sesión
+      </div>
+      <div class="step-connector" id="conn3"></div>
+      <div class="step" id="s4">
+        <div class="step-n">4</div>
+        Elegir mentor
       </div>
     </div>
 
@@ -924,10 +964,10 @@ body.mobile-mode .nav-bar .btn {
   </div>
 </div>
 
-
+<!-- NUEVA PANTALLA: ¿Qué estás buscando? (Paso 1) -->
+ 
 <div class="screen" id="screen-1">
-
-  <div class="hero-1">
+    <div class="hero-1">
     <div class="hero-1-inner">
       <div class="hero-eyebrow">
         <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4"/></svg>
@@ -950,6 +990,28 @@ body.mobile-mode .nav-bar .btn {
         </div>
       </div>
     </div>
+  </div>
+  <div class="search-intent-box">
+    <div class="screen-label">Paso 1 de 4</div>
+    <div class="screen-title">¿Qué estás buscando?</div>
+    <div class="screen-sub">Cuéntanos qué tipo de mentoría o consejo necesitas. Esto ayudará a encontrar a los mejores mentores para ti.</div>
+    <textarea placeholder="Ejemplo: Me gustaría orientación sobre cómo transicionar de la banca tradicional al mundo fintech, o cómo preparar un pitch para inversionistas."></textarea>
+    <button class="btn btn-dark btn-lg" onclick="goToMentorList()" style="margin-top: 18px;">
+      Continuar
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- PANTALLA DE BÚSQUEDA DE MENTORES (Paso 2) -->
+<div class="screen" id="screen-2">
+
+  <div style="margin-bottom: 12px;">
+    <div class="screen-label">Paso 2 de 4</div>
+    <div class="screen-title">Elige tu mentor</div>
+    <div class="screen-sub">Estos son los mentores más adecuados para ti.</div>
   </div>
 
   <div class="filter-row">
@@ -1001,7 +1063,7 @@ body.mobile-mode .nav-bar .btn {
 
     <div class="mcard disabled" id="card-maria" onclick="selectCard('card-maria')">
       <div class="mcard-stripe s2"></div>
-      <div class="mcard-unavailable">No disponible</div>
+      <div class="mcard-unavailable">Desbloquea con la versión premium</div>
       <div class="mcard-body">
         <div class="mcard-head">
           <div class="mcard-avwrap">
@@ -1030,7 +1092,7 @@ body.mobile-mode .nav-bar .btn {
 
     <div class="mcard disabled" id="card-roberto" onclick="selectCard('card-roberto')">
       <div class="mcard-stripe s3"></div>
-      <div class="mcard-unavailable">No disponible</div>
+      <div class="mcard-unavailable">Desbloquea con la versión premium</div>
       <div class="mcard-body">
         <div class="mcard-head">
           <div class="mcard-avwrap">
@@ -1059,7 +1121,7 @@ body.mobile-mode .nav-bar .btn {
   </div>
 </div>
 
-<div class="nav-bar right" id="nav-1" style="display:none">
+<div class="nav-bar right" id="nav-2" style="display:none">
   <button class="btn btn-dark btn-lg" onclick="goToProfile()">
     Ver perfil de Jorge Reyes
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -1069,10 +1131,10 @@ body.mobile-mode .nav-bar .btn {
 </div>
 
 
-<div class="screen" id="screen-2">
+<div class="screen" id="screen-3">
 
   <div style="margin-bottom:24px">
-    <div class="screen-label">Paso 2 de 3</div>
+    <div class="screen-label">Paso 3 de 4</div>
     <div class="screen-title">Perfil del mentor</div>
     <div class="screen-sub">Lee la trayectoria del mentor, elige la modalidad y selecciona un horario cómodo.</div>
   </div>
@@ -1214,8 +1276,8 @@ body.mobile-mode .nav-bar .btn {
   </div>
 </div>
 
-<div class="nav-bar" id="nav-2" style="display:none">
-  <button class="btn btn-outline" onclick="goBack(1)">
+<div class="nav-bar" id="nav-3" style="display:none">
+  <button class="btn btn-outline" onclick="goBack(2)">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
       <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
     </svg>
@@ -1230,10 +1292,10 @@ body.mobile-mode .nav-bar .btn {
 </div>
 
 
-<div class="screen" id="screen-3">
+<div class="screen" id="screen-4">
 
   <div style="margin-bottom:28px">
-    <div class="screen-label">Paso 3 de 3 — Último paso</div>
+    <div class="screen-label">Paso 4 de 4 — Último paso</div>
     <div class="screen-title">Confirma tu sesión</div>
     <div class="screen-sub">Solo necesitamos un contexto breve sobre ti para que tu mentor llegue preparado.</div>
   </div>
@@ -1341,8 +1403,8 @@ body.mobile-mode .nav-bar .btn {
   </div>
 </div>
 
-<div class="nav-bar" id="nav-3" style="display:none">
-  <button class="btn btn-outline" onclick="goBack(2)">
+<div class="nav-bar" id="nav-4" style="display:none">
+  <button class="btn btn-outline" onclick="goBack(3)">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
       <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
     </svg>
@@ -1397,7 +1459,7 @@ function selectDevice(mode) {
   } else {
     document.body.classList.remove('mobile-mode');
   }
-  // Una vez elegido el dispositivo, pasamos automáticamente al paso 1 (Búsqueda)
+  // Una vez elegido el dispositivo, pasamos automáticamente al paso 1 (¿Qué estás buscando?)
   setStep(1);
 }
 
@@ -1410,7 +1472,7 @@ function setStep(n) {
   }
 
   // Ocultar todas las pantallas y barras de navegación secundarias
-  [0, 1, 2, 3].forEach(i => {
+  [0, 1, 2, 3, 4].forEach(i => {
     const scr = document.getElementById('screen-' + i);
     if(scr) scr.classList.remove('active');
     const nb = document.getElementById('nav-' + i);
@@ -1430,27 +1492,32 @@ function setStep(n) {
   const nb = document.getElementById('nav-' + n);
   if(nb) nb.style.display = 'flex';
 
-  // Actualizar estados visuales de la barra de progreso
+  // Actualizar estados visuales de la barra de progreso (ahora con 4 pasos)
   if (n > 0) {
-    for(let i=1; i<=3; i++){
+    for(let i=1; i<=4; i++){
       const el = document.getElementById('s'+i);
-      el.classList.remove('active','done');
-      if(i < n) el.classList.add('done');
-      else if(i === n) el.classList.add('active');
+      if(el) {
+        el.classList.remove('active','done');
+        if(i < n) el.classList.add('done');
+        else if(i === n) el.classList.add('active');
+      }
     }
+    // Conectores: conn1 entre paso1-2, conn2 entre 2-3, conn3 entre 3-4
     document.getElementById('conn1').style.background = n > 1 ? 'var(--sage)' : 'var(--border)';
     document.getElementById('conn2').style.background = n > 2 ? 'var(--sage)' : 'var(--border)';
+    document.getElementById('conn3').style.background = n > 3 ? 'var(--sage)' : 'var(--border)';
   }
 
   current = n;
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function goToProfile()  { setStep(2); }
-function goToConfirm()  { setStep(3); }
+function goToMentorList() { setStep(2); }
+function goToProfile()  { setStep(3); }
+function goToConfirm()  { setStep(4); }
 function goToSuccess()  { setStep('success'); }
 function goBack(n)      { setStep(n); }
-function restart()      { setStep(1); } // Reinicia directo a búsqueda manteniendo la config de pantalla activa
+function restart()      { setStep(2); } // Reinicia directo a la lista de mentores
 
 /* ── CARD SELECTION ──────────────────── */
 function selectCard(id){
